@@ -1,52 +1,57 @@
 {
-  "name": "ttAPI",
-  "version": "1.0.0",
-  "main": "server.js",
-  "repository": "git@github.com:manorie/ttAPI.git",
-  "author": "Mehmet Cetin <mcetin.cm@gmail.com>",
-  "license": "GPLv3",
-  "private": false,
-  "engines": {
-    "node": "10.6.0"
-  },
-  "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "express": "^4.16.3",
-    "morgan": "^1.9.0",
-    "winston": "^3.0.0"
-  },
-  "devDependencies": {
-    "eslint": "^5.2.0",
-    "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.13.0"
-  },
-  "eslintConfig": {
-    "extends": "airbnb-base",
-    "env": {
-        "es6": true,
-        "browser": true
+    "name": "ttAPI",
+    "version": "1.0.0",
+    "main": "server.js",
+    "repository": "git@github.com:manorie/ttAPI.git",
+    "author": "Mehmet Cetin <mcetin.cm@gmail.com>",
+    "license": "GPLv3",
+    "private": false,
+    "engines": {
+        "node": "10.6.0"
     },
-    "rules": {
-        "brace-style": [
-            "error",
-            "stroustrup"
-        ],
-        "comma-dangle": [
-            "error",
-            "never"
-        ],
-        "no-unused-vars": [
-            "warn"
-        ],
-        "no-var": [
-            "off"
-        ],
-        "one-var": [
-            "off"
-        ]
+    "scripts": {
+        "dev": "nodemon server.js",
+        "start": "node server.js",
+        "test": "mocha",
+        "tdd": "mocha --watch --recursive"
+    },
+    "dependencies": {
+        "express": "^4.16.3",
+        "morgan": "^1.9.0",
+        "winston": "^3.0.0"
+    },
+    "devDependencies": {
+        "chai": "^4.1.2",
+        "chai-http": "^4.0.0",
+        "eslint": "^5.2.0",
+        "eslint-config-airbnb-base": "^13.0.0",
+        "eslint-plugin-import": "^2.13.0",
+        "mocha": "^5.2.0"
+    },
+    "eslintConfig": {
+        "extends": "airbnb-base",
+        "env": {
+            "es6": true,
+            "browser": true
+        },
+        "rules": {
+            "brace-style": [
+                "error",
+                "stroustrup"
+            ],
+            "comma-dangle": [
+                "error",
+                "never"
+            ],
+            "no-unused-vars": [
+                "warn"
+            ],
+            "no-var": [
+                "off"
+            ],
+            "one-var": [
+                "off"
+            ]
+        }
     }
-  }
 }

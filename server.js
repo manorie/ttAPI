@@ -9,8 +9,12 @@ app.use(morgan('combined', { stream: logger.stream }));
 
 app.use('/', (req, res) => res
   .status(200)
-  .send('Hello'));
+  .send('Hell'));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   logger.info(`listening on port ${port}`);
 });
+
+module.exports = {
+  server
+};
