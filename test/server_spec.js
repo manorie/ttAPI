@@ -1,9 +1,10 @@
 const chai = require('chai');
+const mongoose = require('mongoose');
 const chaiHttp = require('chai-http');
 const {
   describe, it, after
 } = require('mocha');
-const { server, mongoose } = require('../server');
+const { server } = require('../server');
 // const { logger } = require('../logger');
 
 const { expect } = chai;
