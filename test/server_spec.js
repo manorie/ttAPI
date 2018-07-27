@@ -24,6 +24,7 @@ describe('server', () => {
         .get('/')
         .end((err, res) => {
           expect(res).to.have.status(200);
+          expect(res.body.message).to.be.equal('You shall not pass!');
           done();
         });
     });
