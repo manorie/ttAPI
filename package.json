@@ -10,13 +10,14 @@
         "node": "10.6.0"
     },
     "scripts": {
-        "dev": "nodemon server.js",
-        "start": "node server.js",
-        "test": "mocha",
-        "tdd": "mocha --watch --recursive"
+        "dev": "NODE_ENV=development nodemon server.js",
+        "start": "NODE_ENV=production node server.js",
+        "test": "NODE_ENV=test mocha",
+        "tdd": "NODE_ENV=test mocha --watch --recursive"
     },
     "dependencies": {
         "express": "^4.16.3",
+        "mongoose": "^5.2.5",
         "morgan": "^1.9.0",
         "winston": "^3.0.0"
     },

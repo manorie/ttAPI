@@ -1,18 +1,24 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const { describe, it, after } = require('mocha');
-const { server } = require('../server');
+const {
+  describe, it, after
+} = require('mocha');
+const { server, mongoose } = require('../server');
+// const { logger } = require('../logger');
 
 const { expect } = chai;
 chai.use(chaiHttp);
 
+// close mongodb and server connection after every endpoint test
+after((done) => {
+  server.close();
+  mongoose.connection.close();
+
+  done();
+});
+
 describe('server', () => {
   describe('/', () => {
-    after((done) => {
-      server.close();
-      done();
-    });
-
     it('responds with status 200', (done) => {
       chai.request(server)
         .get('/')

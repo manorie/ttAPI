@@ -1,20 +1,24 @@
 const express = require('express');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 
 const { logger } = require('./logger');
-const { port } = require('./config/env');
+const { mongoURI, port } = require('./config/env');
+
+mongoose.connect(mongoURI, { useNewUrlParser: true });
 
 const app = express();
 app.use(morgan('combined', { stream: logger.stream }));
 
 app.use('/', (req, res) => res
   .status(200)
-  .send('Hell'));
+  .send('Hello'));
 
 const server = app.listen(port, () => {
   logger.info(`listening on port ${port}`);
 });
 
 module.exports = {
-  server
+  server,
+  mongoose
 };
