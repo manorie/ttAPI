@@ -78,7 +78,7 @@ describe('models_tag', () => {
       const u1 = await User.findOne({ email: 'u1@example.com' });
 
       await Tag.create({
-        name: 'dumyTag0',
+        name: 'dummyTag0',
         _user: u1._id
       });
     });
@@ -94,19 +94,19 @@ describe('models_tag', () => {
 
         const u1 = await User.findOne({ email: 'u1@example.com' });
         const t0 = await Tag.find({
-          name: 'dumyTag0',
+          name: 'dummyTag0',
           _user: u1
         });
 
         expect(t0.length).to.eq(1);
-        expect(t0[0].get('name')).to.eq('dumyTag0');
+        expect(t0[0].get('name')).to.eq('dummyTag0');
 
         const t1 = await Tag.find({
           _user: u1
         });
 
         expect(t1.length).to.eq(1);
-        expect(t0[0].get('name')).to.eq('dumyTag0');
+        expect(t0[0].get('name')).to.eq('dummyTag0');
       });
 
       it('should find tags of user', async () => {
@@ -115,11 +115,11 @@ describe('models_tag', () => {
         const u1 = await User.findOne({ email: 'u1@example.com' });
         await Tag.create(
           {
-            name: 'dumyTag1',
+            name: 'dummyTag1',
             _user: u1._id
           },
           {
-            name: 'dumyTag2',
+            name: 'dummyTag2',
             _user: u1._id
           }
         );
@@ -129,22 +129,121 @@ describe('models_tag', () => {
         });
 
         expect(t2.length).to.eq(3);
-        expect(t2[0].get('name')).to.eq('dumyTag0');
-        expect(t2[1].get('name')).to.eq('dumyTag1');
-        expect(t2[2].get('name')).to.eq('dumyTag2');
+        expect(t2[0].get('name')).to.eq('dummyTag0');
+        expect(t2[1].get('name')).to.eq('dummyTag1');
+        expect(t2[2].get('name')).to.eq('dummyTag2');
       });
     });
 
     describe('#create and #destroy a tag', () => {
+      it('should not fail', async () => {
+        await Tag.remove({});
+        expect(await Tag.count()).to.eq(0);
 
+        const u2 = await User.findOne({ email: 'u1@example.com' });
+
+        let err;
+        try {
+          await Tag.create({
+            name: 'dummyTag3',
+            _user: u2
+          });
+        }
+        catch (e) {
+          err = e;
+        }
+        expect(err).to.eq(undefined);
+        expect(await Tag.count()).to.eq(1);
+
+        const t0 = await Tag.findOne({ name: 'dummyTag3' });
+        expect(t0.get('name')).to.eq('dummyTag3');
+
+        // add one more tag to see if the right tag is destroyed
+        await Tag.create({
+          name: 'dummyTag4',
+          _user: u2
+        });
+        expect(await Tag.count()).to.eq(2);
+        const { ok } = await Tag.remove({ name: 'dummyTag3', _user: u2 });
+        expect(ok).to.eq(1);
+        expect(await Tag.count()).to.eq(1);
+
+        const [t1] = await Tag.find({ _user: u2 });
+        expect(t1.get('name')).to.eq('dummyTag4');
+      });
     });
 
     describe('#create second tag for same user', () => {
+      it('should not be a created and raise an error', async () => {
+        const u3 = await User.findOne({ email: 'u1@example.com' });
 
+        await Tag.create({
+          name: 'dummyTag5',
+          _user: u3
+        });
+        expect(await Tag.count()).to.eq(2);
+
+        let err;
+        try {
+          await Tag.create({
+            name: 'dummyTag5',
+            _user: u3
+          });
+        }
+        catch (e) {
+          err = e;
+        }
+        expect(err.message).to.contain('dup key');
+        expect(await Tag.count()).to.eq(2);
+      });
     });
 
     describe('#create same tag for different user', () => {
+      it('should not fail', async () => {
+        await User.remove({});
+        await Tag.remove({});
 
+        await User.create(
+          {
+            name: 'u2',
+            email: 'u2@example.com',
+            password: 'hashedPassword'
+          },
+          {
+            name: 'u3',
+            email: 'u3@example.com',
+            password: 'hashedPassword'
+          },
+        );
+        expect(await User.count()).to.eq(2);
+        expect(await Tag.count()).to.eq(0);
+
+
+        const u1 = await User.findOne({ email: 'u2@example.com' });
+        const u2 = await User.findOne({ email: 'u3@example.com' });
+
+        let err;
+        try {
+          await Tag.create({
+            name: 'dummyTag6',
+            _user: u1
+          });
+
+          await Tag.create({
+            name: 'dummyTag6',
+            _user: u2
+          });
+        }
+        catch (e) {
+          err = e;
+        }
+
+        expect(err).to.eq(undefined);
+        const [t0, t1] = await Tag.find({});
+        expect(t0.get('name')).to.eq('dummyTag6');
+        expect(t1.get('name')).to.eq('dummyTag6');
+        expect(t0._user).to.not.eq(t1._user);
+      });
     });
   });
 });

@@ -22,7 +22,7 @@ describe('models_user', () => {
       const u0 = new User({
         name: '',
         email: 'manorie@example.com',
-        password: 'nonhashedpass'
+        password: 'hashedPassword'
       });
 
       u0.save((error) => {
@@ -38,7 +38,7 @@ describe('models_user', () => {
       const u1 = new User({
         name: 'manorie',
         email: '',
-        password: 'nonhashedpass'
+        password: 'hashedPassword'
       });
 
       u1.save((error) => {
@@ -70,7 +70,7 @@ describe('models_user', () => {
         const u2 = new User({
           name: 'manorie',
           email: address,
-          password: 'nonhashedpass'
+          password: 'hashedPassword'
         });
 
         u2.save((error) => {
@@ -91,7 +91,7 @@ describe('models_user', () => {
       await User.create({
         name: 'manorie',
         email: 'manorie@example.com',
-        password: 'nonhashedpass'
+        password: 'hashedPassword'
       });
     });
 
@@ -103,11 +103,11 @@ describe('models_user', () => {
         expect(user).to.be.a('object');
         expect(user.get('name')).to.eq('manorie');
         expect(user.get('email')).to.eq('manorie@example.com');
-        expect(user.get('password')).to.eq('nonhashedpass');
+        expect(user.get('password')).to.eq('hashedPassword');
       });
     });
 
-    describe('#create and #destory a user', () => {
+    describe('#create and #destroy a user', () => {
       it('should not fail', async () => {
         expect(await User.count()).to.eq(1);
 
@@ -116,7 +116,7 @@ describe('models_user', () => {
           await User.create({
             name: 'y',
             email: 'y@example.com',
-            password: 'nonhashedpassz'
+            password: 'hashedPassword'
           });
         }
         catch (e) {
@@ -129,7 +129,7 @@ describe('models_user', () => {
         expect(user).to.be.a('object');
         expect(user.get('name')).to.eq('y');
         expect(user.get('email')).to.eq('y@example.com');
-        expect(user.get('password')).to.eq('nonhashedpassz');
+        expect(user.get('password')).to.eq('hashedPassword');
 
         const { ok } = await User.remove({ email: 'y@example.com' });
         expect(ok).to.eq(1);
