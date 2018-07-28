@@ -24,12 +24,14 @@ const userSchema = new Schema({
   }
 });
 
-let users;
+let User;
 try {
-  users = mongoose.model('users', userSchema);
+  User = mongoose.model('users', userSchema);
 }
 catch (e) {
-  users = mongoose.model('users');
+  User = mongoose.model('users');
 }
 
-module.exports = users;
+module.exports = {
+  User
+};

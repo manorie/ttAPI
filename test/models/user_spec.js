@@ -11,10 +11,10 @@ const { mongoURI } = require('../../config/env');
 
 mongoose.connect(mongoURI, { useNewUrlParser: true });
 
-const User = require('../../models/user');
+const { User } = require('../../models/user');
 
 describe('models_user', () => {
-  describe('validations', () => {
+  describe('validation', () => {
     it('raises an error with empty name', (done) => {
       const u0 = new User({
         name: '',
@@ -111,13 +111,20 @@ describe('models_user', () => {
       it('should not be created and raise error', async () => {
         expect(await User.count()).to.eq(1);
 
-        await User.create({
-          name: 'x',
-          email: 'manorie@example.com',
-          password: 'y'
-        });
+        let err;
+        try {
+          await User.create({
+            name: 'x',
+            email: 'manorie@example.com',
+            password: 'y'
+          });
+        }
+        catch (e) {
+          err = e;
+        }
 
         expect(await User.count()).to.eq(1);
+        expect(err.message).to.contain('duplicate key error');
       });
     });
   });
