@@ -27,10 +27,10 @@ const userSchema = new Schema({
 
 let User;
 try {
-  User = mongoose.model('users', userSchema);
+  User = mongoose.model('user', userSchema);
 }
 catch (e) {
-  User = mongoose.model('users');
+  User = mongoose.model('user');
 }
 
 module.exports = {

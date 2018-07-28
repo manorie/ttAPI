@@ -3,8 +3,7 @@ const { expect } = require('chai');
 const {
   describe,
   it,
-  before,
-  after
+  before
 } = require('mocha');
 
 const { mongoURI } = require('../../config/env');
@@ -14,6 +13,10 @@ mongoose.connect(mongoURI, { useNewUrlParser: true });
 const { User } = require('../../models/user');
 
 describe('models_user', () => {
+  // after((done) => {
+  //   mongoose.connection.close(() => done());
+  // });
+
   describe('validation', () => {
     it('raises an error with empty name', (done) => {
       const u0 = new User({
@@ -83,11 +86,8 @@ describe('models_user', () => {
   });
 
   describe('persistance', () => {
-    after(async () => {
-      await User.remove({});
-    });
-
     before(async () => {
+      await User.remove({});
       await User.create({
         name: 'manorie',
         email: 'manorie@example.com',
@@ -95,7 +95,7 @@ describe('models_user', () => {
       });
     });
 
-    describe('#find()', () => {
+    describe('#find', () => {
       it('should find user with email', async () => {
         expect(await User.count()).to.eq(1);
 
@@ -104,6 +104,38 @@ describe('models_user', () => {
         expect(user.get('name')).to.eq('manorie');
         expect(user.get('email')).to.eq('manorie@example.com');
         expect(user.get('password')).to.eq('nonhashedpass');
+      });
+    });
+
+    describe('#create and #destory a user', () => {
+      it('should not fail', async () => {
+        expect(await User.count()).to.eq(1);
+
+        let err;
+        try {
+          await User.create({
+            name: 'y',
+            email: 'y@example.com',
+            password: 'nonhashedpassz'
+          });
+        }
+        catch (e) {
+          err = e;
+        }
+        expect(err).to.eq(undefined);
+        expect(await User.count()).to.eq(2);
+
+        const user = await User.findOne({ email: 'y@example.com' });
+        expect(user).to.be.a('object');
+        expect(user.get('name')).to.eq('y');
+        expect(user.get('email')).to.eq('y@example.com');
+        expect(user.get('password')).to.eq('nonhashedpassz');
+
+        const { ok } = await User.remove({ email: 'y@example.com' });
+        expect(ok).to.eq(1);
+
+        // removing the new user, leaving the one created with before hook
+        expect(await User.count()).to.eq(1);
       });
     });
 
