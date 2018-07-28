@@ -52,6 +52,9 @@
             ],
             "one-var": [
                 "off"
+            ],
+            "no-underscore-dangle": [
+                "off"
             ]
         }
     }

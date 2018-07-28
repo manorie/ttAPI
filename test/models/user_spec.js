@@ -3,8 +3,8 @@ const { expect } = require('chai');
 const {
   describe,
   it,
-  after,
-  before
+  before,
+  after
 } = require('mocha');
 
 const { mongoURI } = require('../../config/env');
@@ -83,27 +83,41 @@ describe('models_user', () => {
   });
 
   describe('persistance', () => {
-    before((done) => {
-      User.remove().then(() => {
-        done();
+    after(async () => {
+      await User.remove({});
+    });
+
+    before(async () => {
+      await User.create({
+        name: 'manorie',
+        email: 'manorie@example.com',
+        password: 'nonhashedpass'
       });
     });
 
-    it('persist the record as expected', (done) => {
-      const u3 = new User({
-        name: 'manorie',
-        email: 'manorie@example.com',
-        password: 'hashedsomelongstring'
+    describe('#find()', () => {
+      it('should find user with email', async () => {
+        expect(await User.count()).to.eq(1);
+
+        const user = await User.findOne({ email: 'manorie@example.com' });
+        expect(user).to.be.a('object');
+        expect(user.get('name')).to.eq('manorie');
+        expect(user.get('email')).to.eq('manorie@example.com');
+        expect(user.get('password')).to.eq('nonhashedpass');
       });
+    });
 
-      u3.save((error) => {
-        expect(error).to.eq(null);
+    describe('#create second user with same email', () => {
+      it('should not be created and raise error', async () => {
+        expect(await User.count()).to.eq(1);
 
-        User
-          .findOne({ email: 'manorie@example.com' }, (user) => {
-            console.log(user);
-            done();
-          });
+        await User.create({
+          name: 'x',
+          email: 'manorie@example.com',
+          password: 'y'
+        });
+
+        expect(await User.count()).to.eq(1);
       });
     });
   });

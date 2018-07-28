@@ -24,4 +24,12 @@ const userSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('users') || mongoose.model('users', userSchema);
+let users;
+try {
+  users = mongoose.model('users', userSchema);
+}
+catch (e) {
+  users = mongoose.model('users');
+}
+
+module.exports = users;
