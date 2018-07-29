@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const tagSchema = new Schema({
-  user: {
+  _user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'user is required']
@@ -18,10 +18,10 @@ tagSchema.index({ _user: 1, name: 1 }, { unique: true });
 
 let Tag;
 try {
-  Tag = mongoose.model('tag', tagSchema);
+  Tag = mongoose.model('Tag', tagSchema);
 }
 catch (e) {
-  Tag = mongoose.model('tag');
+  Tag = mongoose.model('Tag');
 }
 
 module.exports = {
