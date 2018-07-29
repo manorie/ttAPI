@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const tagSchema = new Schema({
-  _user: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'user is required']

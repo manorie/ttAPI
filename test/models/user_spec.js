@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const {
   describe,
   it,
-  before
+  beforeEach
 } = require('mocha');
 
 const { mongoURI } = require('../../config/env');
@@ -11,19 +11,12 @@ const { mongoURI } = require('../../config/env');
 mongoose.connect(mongoURI, { useNewUrlParser: true });
 
 const { User } = require('../../models/user');
+const { userFactory } = require('../factories/user');
 
 describe('models_user', () => {
-  // after((done) => {
-  //   mongoose.connection.close(() => done());
-  // });
-
   describe('validation', () => {
     it('raises an error with empty name', (done) => {
-      const u0 = new User({
-        name: '',
-        email: 'manorie@example.com',
-        password: 'hashedPassword'
-      });
+      const u0 = userFactory({ name: '' });
 
       u0.save((error) => {
         expect(error.errors.name).to.not.eq(undefined);
@@ -35,11 +28,7 @@ describe('models_user', () => {
     });
 
     it('raises an error with empty email', (done) => {
-      const u1 = new User({
-        name: 'manorie',
-        email: '',
-        password: 'hashedPassword'
-      });
+      const u1 = userFactory({ email: '' });
 
       u1.save((error) => {
         expect(error.errors.name).to.eq(undefined);
@@ -51,13 +40,9 @@ describe('models_user', () => {
 
 
     it('raises an error with empty password', (done) => {
-      const u1 = new User({
-        name: 'manorie',
-        email: 'manorie@example.com',
-        password: ''
-      });
+      const u2 = userFactory({ password: '' });
 
-      u1.save((error) => {
+      u2.save((error) => {
         expect(error.errors.name).to.eq(undefined);
         expect(error.errors.email).to.eq(undefined);
         expect(error.errors.password.message).to.eq('password is required');
@@ -65,15 +50,11 @@ describe('models_user', () => {
       });
     });
 
-    it('raises an error with malformatted email adresses', (done) => {
-      ['xx@yy', 'dumymail', '@ll.com', 'as@'].forEach((address) => {
-        const u2 = new User({
-          name: 'manorie',
-          email: address,
-          password: 'hashedPassword'
-        });
+    it('raises an error with malformed email addresses', (done) => {
+      ['xx@yy', 'dummyMail', '@ll.com', 'as@'].forEach((address) => {
+        const u3 = userFactory({ email: address });
 
-        u2.save((error) => {
+        u3.save((error) => {
           expect(error.errors.name).to.eq(undefined);
           expect(error.errors.email.message)
             .to
@@ -86,17 +67,13 @@ describe('models_user', () => {
   });
 
   describe('persistance', () => {
-    before(async () => {
+    beforeEach(async () => {
       await User.remove({});
-      await User.create({
-        name: 'manorie',
-        email: 'manorie@example.com',
-        password: 'hashedPassword'
-      });
     });
 
     describe('#find', () => {
       it('should find user with email', async () => {
+        await userFactory().save();
         expect(await User.count()).to.eq(1);
 
         const user = await User.findOne({ email: 'manorie@example.com' });
@@ -109,21 +86,19 @@ describe('models_user', () => {
 
     describe('#create and #destroy a user', () => {
       it('should not fail', async () => {
-        expect(await User.count()).to.eq(1);
-
         let err;
         try {
-          await User.create({
+          await userFactory({
             name: 'y',
             email: 'y@example.com',
             password: 'hashedPassword'
-          });
+          }).save();
         }
         catch (e) {
           err = e;
         }
         expect(err).to.eq(undefined);
-        expect(await User.count()).to.eq(2);
+        expect(await User.count()).to.eq(1);
 
         const user = await User.findOne({ email: 'y@example.com' });
         expect(user).to.be.a('object');
@@ -135,21 +110,25 @@ describe('models_user', () => {
         expect(ok).to.eq(1);
 
         // removing the new user, leaving the one created with before hook
-        expect(await User.count()).to.eq(1);
+        expect(await User.count()).to.eq(0);
       });
     });
 
     describe('#create second user with same email', () => {
       it('should not be created and raise error', async () => {
-        expect(await User.count()).to.eq(1);
-
         let err;
         try {
-          await User.create({
+          await userFactory({
             name: 'x',
             email: 'manorie@example.com',
             password: 'y'
-          });
+          }).save();
+
+          await userFactory({
+            name: 'z',
+            email: 'manorie@example.com',
+            password: 't'
+          }).save();
         }
         catch (e) {
           err = e;
