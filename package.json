@@ -4,7 +4,7 @@
     "main": "server.js",
     "repository": "git@github.com:manorie/ttAPI.git",
     "author": "Mehmet Cetin <mcetin.cm@gmail.com>",
-    "license": "GPLv3",
+    "license": "GPL-3.0-or-later",
     "private": false,
     "engines": {
         "node": "10.6.0"

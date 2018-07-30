@@ -12,10 +12,16 @@
   timeEnd: y
 
 - a job can have sub tasks
-- when a job tagged / sub tasks tagged automatically
+- when a job collection tagged / sub tasks tagged automatically
 - when a sub task tagged differently / it get seperated from the jobs and 
 becomes another job
 - job groupping can be done on FE - jobs can will be singular
+
+
+- job needs to be created by user
+- job may have multiple tags
+- user can have same job name for different jobs
+- jobs will be grouped by days/weeks/etc when sending to FE
 
 - tags -> N
   _id
