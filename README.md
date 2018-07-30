@@ -11,6 +11,12 @@
   timeStart: x
   timeEnd: y
 
+- a job can have sub tasks
+- when a job tagged / sub tasks tagged automatically
+- when a sub task tagged differently / it get seperated from the jobs and 
+becomes another job
+- job groupping can be done on FE - jobs can will be singular
+
 - tags -> N
   _id
   user: User
