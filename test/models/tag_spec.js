@@ -23,7 +23,7 @@ describe('models_tag', () => {
 
   describe('validation', () => {
     it('raises an error with empty name', async () => {
-      const t0 = tagFactory({ name: '' }, { _user: await userFactory() });
+      const t0 = tagFactory({ name: '' }, await userFactory());
 
       let err;
       try {
@@ -37,7 +37,7 @@ describe('models_tag', () => {
     });
 
     it('raises an error with empty user', async () => {
-      const t1 = tagFactory({ _user: undefined });
+      const t1 = tagFactory({ user_id: undefined });
 
       let err;
       try {
@@ -52,11 +52,6 @@ describe('models_tag', () => {
   });
 
   describe('persistance', () => {
-    beforeEach(async () => {
-      await Tag.remove({});
-      await User.remove({});
-    });
-
     describe('#find', () => {
       it('should find tag with name and user', async () => {
         await userFactory({ email: 'x@y.com' }).save();
@@ -69,11 +64,11 @@ describe('models_tag', () => {
         expect(await Tag.count()).to.eq(1);
 
         const tag = await Tag
-          .find({ name: 'dummyTag1', _user: user.id });
+          .find({ name: 'dummyTag1', user_id: user.id });
         expect(tag).to.be.a('array');
         expect(tag.length).to.eq(1);
 
-        const [userOnTag] = await User.find({ _id: tag[0]._user._id });
+        const [userOnTag] = await User.find({ _id: tag[0].user_id._id });
         expect(userOnTag.id).to.be.eq(user.id);
         expect(userOnTag.email).to.eq('x@y.com');
 
@@ -93,7 +88,7 @@ describe('models_tag', () => {
         await tagFactory({ name: 'dummyTag4' }, user1.id).save();
         expect(await Tag.count()).to.eq(3);
 
-        const tags = await Tag.find({ _user: user0.id });
+        const tags = await Tag.find({ user_id: user0.id });
         expect(tags.length).to.eq(2);
 
         expect(tags[0].name).to.eq('dummyTag2');
@@ -117,11 +112,11 @@ describe('models_tag', () => {
         expect(err).to.eq(undefined);
         expect(await Tag.count()).to.eq(2);
 
-        const t = await Tag.findOne({ name: 'dummyTag5' }).populate('_user');
-        expect(t.get('_user.id')).to.eq(user2.id);
+        const t = await Tag.findOne({ name: 'dummyTag5' }).populate('user_id');
+        expect(t.get('user_id.id')).to.eq(user2.id);
 
         try {
-          await Tag.remove({ name: 'dummyTag5', _user: user2.id });
+          await Tag.remove({ name: 'dummyTag5', user_id: user2.id });
         }
         catch (e) {
           err = e;
@@ -129,7 +124,7 @@ describe('models_tag', () => {
         expect(err).to.eq(undefined);
         expect(await Tag.count()).to.eq(1);
 
-        const tag6 = await Tag.findOne({ name: 'dummyTag6', _user: user2.id });
+        const tag6 = await Tag.findOne({ name: 'dummyTag6', user_id: user2.id });
         expect(tag6.get('name')).to.eq('dummyTag6');
       });
     });

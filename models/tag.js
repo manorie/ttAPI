@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const tagSchema = new Schema({
-  _user: {
+  user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'user is required']
@@ -14,7 +14,7 @@ const tagSchema = new Schema({
   }
 });
 
-tagSchema.index({ _user: 1, name: 1 }, { unique: true });
+tagSchema.index({ user_id: 1, name: 1 }, { unique: true });
 
 let Tag;
 try {
