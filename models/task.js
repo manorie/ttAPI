@@ -28,11 +28,12 @@ const taskSchema = new Schema({
   }
 });
 
-taskSchema.path('end').validate((end) => {
-  if (Date.parse(this.start) > Date.parse(end)) {
-    return false;
+taskSchema.pre('save', (next) => {
+  if (this.start > this.end) {
+    next(new Error('end date should be bigger than start date'));
+    return;
   }
-  return true;
+  next();
 });
 
 let Task;
