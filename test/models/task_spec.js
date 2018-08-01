@@ -26,7 +26,7 @@ describe('models_task', () => {
 
   describe('validation', () => {
     it('raises an error with empty start date', async () => {
-      const t0 = taskFactory({ startedAt: undefined }, userFactory());
+      const t0 = taskFactory({ start: undefined, end: new Date() }, userFactory());
 
       let err;
       try {
@@ -40,7 +40,7 @@ describe('models_task', () => {
     });
 
     it('raises an error with empty end date', async () => {
-      const t0 = taskFactory({ endedAt: undefined }, userFactory());
+      const t0 = taskFactory({ start: new Date(), end: undefined }, userFactory());
 
       let err;
       try {
@@ -69,8 +69,8 @@ describe('models_task', () => {
 
     it('raises an error when start date is bigger than end date', async () => {
       const t0 = taskFactory({
-        startedAt: Date.parse('01 02 2018'),
-        endedAt: Date.parse('01 01 2018')
+        start: Date.parse('03 03 2018'),
+        end: Date.parse('02 02 2018')
       }, userFactory());
 
       let err;
@@ -88,7 +88,8 @@ describe('models_task', () => {
   describe('persistance', () => {
     describe('#find', () => {
       it('should be found with user', async () => {
-
+        await taskFactory({ name: 'task0' },
+          userFactory({ email: 'x@y.com' })).validate();
       });
 
       it('should be found with user and tag name', async () => {

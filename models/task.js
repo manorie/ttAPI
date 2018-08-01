@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const dateValidator = ({ endDate, startDate }) => endDate <= startDate;
-
 const taskSchema = new Schema({
   user_id: {
     type: Schema.Types.ObjectId,
@@ -20,18 +18,22 @@ const taskSchema = new Schema({
     type: String,
     required: [true, 'name is required']
   },
-  startedAt: {
+  start: {
     type: Date,
-    default: Date.now,
     required: [true, 'start date is required']
   },
-  endedAt: {
+  end: {
     type: Date,
-    required: [true, 'end date is required'],
-    validate: [dateValidator, 'start date should be less than end date']
+    required: [true, 'end date is required']
   }
 });
 
+taskSchema.path('end').validate((end) => {
+  if (Date.parse(this.start) > Date.parse(end)) {
+    return false;
+  }
+  return true;
+});
 
 let Task;
 try {
