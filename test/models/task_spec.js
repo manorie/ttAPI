@@ -81,7 +81,7 @@ describe('models_task', () => {
         err = e;
       }
       expect(await Task.count()).to.eq(0);
-      expect(err.message).to.contain('start date should be less than end date');
+      expect(err.message).to.contain('end date should be greater than start date');
     });
   });
 

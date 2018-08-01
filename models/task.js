@@ -28,13 +28,15 @@ const taskSchema = new Schema({
   }
 });
 
-taskSchema.pre('save', (next) => {
+function dateValidation(next) {
   if (this.start > this.end) {
-    next(new Error('end date should be bigger than start date'));
+    next(new Error('end date should be greater than start date'));
     return;
   }
   next();
-});
+}
+
+taskSchema.pre('save', dateValidation);
 
 let Task;
 try {
