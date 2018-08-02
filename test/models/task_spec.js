@@ -88,12 +88,57 @@ describe('models_task', () => {
   describe('persistance', () => {
     describe('#find', () => {
       it('should be found with user', async () => {
-        await taskFactory({ name: 'task0' },
-          userFactory({ email: 'x@y.com' })).validate();
+        await taskFactory({
+          name: 'task0',
+          start: Date.parse('02 03 2018'),
+          end: Date.parse('03 04 2018')
+        }, userFactory({ email: 'x@y.com' })).save();
+
+        const u0 = await User.findOne({ email: 'x@y.com' });
+        const t0 = await Task.find({ user: u0 });
+
+        expect(t0).to.be.a('array');
+        expect(t0.length).to.eq(1);
+        expect(t0[0].name).to.eq('task0');
+        expect(Date.parse(t0[0].start)).to.eq(1517601600000);
+        expect(Date.parse(t0[0].end)).to.eq(1520107200000);
       });
 
       it('should be found with user and tag name', async () => {
+        const u0 = await userFactory({ email: 'z@a.com' }).save();
+        const tag0 = await tagFactory('u0Tag', u0).save();
 
+        await taskFactory({
+          name: 'task0',
+          start: Date.parse('03 04 2018'),
+          end: Date.parse('05 06 2018')
+        },
+        u0,
+        [
+          tag0
+        ]).save();
+
+
+        await taskFactory({
+          name: 'task1',
+          start: Date.parse('04 05 2018'),
+          end: Date.parse('06 07 2018')
+        },
+        u0,
+        [
+          tag0
+        ]).save();
+
+        const tasks = await Task.find({
+          user_id: u0,
+          tags: { $all: [tag0.id] }
+        });
+
+        expect(tasks.length).to.eq(2);
+        expect(tasks[0].name).to.eq('task0');
+        expect(Date.parse(tasks[0].start)).to.eq(1520107200000);
+        expect(tasks[1].name).to.eq('task1');
+        expect(Date.parse(tasks[1].end)).to.eq(1528315200000);
       });
 
       it('should be found with user and tag names', async () => {
@@ -106,10 +151,6 @@ describe('models_task', () => {
     });
 
     describe('#create', () => {
-      it('should not fail', async () => {
-
-      });
-
       it('should not fail on duplicate records', async () => {
 
       });
