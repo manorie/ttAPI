@@ -88,10 +88,13 @@ describe('models_task', () => {
   describe('persistance', () => {
     describe('#find', () => {
       it('should be found with user', async () => {
+        const start = Date.parse('02 03 2018');
+        const end = Date.parse('03 04 2018');
+
         await taskFactory({
           name: 'task0',
-          start: Date.parse('02 03 2018'),
-          end: Date.parse('03 04 2018')
+          start,
+          end
         }, userFactory({ email: 'x@y.com' })).save();
 
         const u0 = await User.findOne({ email: 'x@y.com' });
@@ -100,8 +103,8 @@ describe('models_task', () => {
         expect(t0).to.be.a('array');
         expect(t0.length).to.eq(1);
         expect(t0[0].name).to.eq('task0');
-        expect(Date.parse(t0[0].start)).to.eq(1517601600000);
-        expect(Date.parse(t0[0].end)).to.eq(1520107200000);
+        expect(Date.parse(t0[0].start)).to.eq(start);
+        expect(Date.parse(t0[0].end)).to.eq(end);
       });
 
       it('should be found with user and tag name', async () => {
@@ -136,9 +139,7 @@ describe('models_task', () => {
 
         expect(tasks.length).to.eq(2);
         expect(tasks[0].name).to.eq('task0');
-        expect(Date.parse(tasks[0].start)).to.eq(1520107200000);
         expect(tasks[1].name).to.eq('task1');
-        expect(Date.parse(tasks[1].end)).to.eq(1528315200000);
       });
 
       it('should be found with user and tag names', async () => {
