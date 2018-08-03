@@ -14,5 +14,6 @@ const mongoURI = () => {
 
 module.exports = {
   port: process.env.PORT || 9123,
-  mongoURI: mongoURI()
+  mongoURI: mongoURI(),
+  secret: process.env.SECRET
 };
