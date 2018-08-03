@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config/env');
 
-const verifyToken = req => new Promise(async (resolve, reject) => {
+const verifyToken = (req, secret) => new Promise(async (resolve, reject) => {
   const token = req.headers['x-access-token'];
 
   if (!token) {
@@ -10,7 +9,7 @@ const verifyToken = req => new Promise(async (resolve, reject) => {
 
   try {
     const { id } = await jwt.verify(token, secret);
-    req.id = id;
+    req.userID = id;
     resolve({ message: 'you have a valid token' });
   }
   catch (e) {
