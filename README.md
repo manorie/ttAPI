@@ -6,7 +6,13 @@
 
 Install MongoDB and,
 
+running tests,
+
 > NODE_ENV=test MONGODB_TEST_URI=mongodb://127.0.0.1:27017/ttAPI_test yarn run tdd
+
+running dev env,
+
+> NODE_ENV=dev MONGODB_DEV_URI=mongodb://127.0.0.1:27017/ttAPI_dev yarn run dev
 
 
 **Notes**
