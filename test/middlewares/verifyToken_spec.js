@@ -7,9 +7,9 @@ const {
   it
 } = require('mocha');
 
-const { verifyToken } = require('../../middleware/verifyToken');
+const { verifyToken } = require('../../middlewares/verifyToken');
 
-describe('middleware_verifyToken', () => {
+describe('middlewares_verifyToken', () => {
   it('raises an error with empty token', async () => {
     let err;
     try {
