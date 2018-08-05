@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const { User } = require('../models/user');
 const { logger } = require('../logger');
 
-const register = (req, res) => {
+const register = async (req, res) => {
   const { name, email, password } = req.body || {};
 
   if (!name || !email || !password) {
@@ -30,18 +30,19 @@ const register = (req, res) => {
     hashedPassword = bcrypt.hashSync(password, 8);
   }
 
-  User.create({
-    name,
-    email,
-    password: hashedPassword
-  })
-    .then((user) => {
-      res.json(pick(user, ['_id', 'name', 'email']));
-    })
-    .catch((err) => {
-      logger.error(err);
-      res.status(500).send(pick(err, ['code', 'message']));
+  let user;
+  try {
+    user = await User.create({
+      name,
+      email,
+      password: hashedPassword
     });
+  }
+  catch (err) {
+    logger.error(err);
+    res.status(500).send(pick(err, ['code', 'message']));
+  }
+  return res.json(pick(user, ['_id', 'name', 'email']));
 };
 
 module.exports = {
