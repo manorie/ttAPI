@@ -1,10 +1,29 @@
 const { pick } = require('lodash');
+const { isEmail } = require('validator');
 const bcrypt = require('bcrypt');
 const { User } = require('../models/user');
 const { logger } = require('../logger');
 
 const register = (req, res) => {
   const { name, email, password } = req.body || {};
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      message: 'name, email and password is required'
+    });
+  }
+
+  if (!isEmail(email)) {
+    return res.status(400).json({
+      message: 'invalid email address'
+    });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({
+      message: 'password is too short'
+    });
+  }
 
   let hashedPassword;
   if (password) {
@@ -21,7 +40,7 @@ const register = (req, res) => {
     })
     .catch((err) => {
       logger.error(err);
-      res.status(500).send(err);
+      res.status(500).send(pick(err, ['code', 'message']));
     });
 };
 
